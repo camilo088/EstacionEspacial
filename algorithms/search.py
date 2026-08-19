@@ -13,7 +13,7 @@ def tinyDiagnosticSearch(problem: SearchProblem):
     e = Directions.EAST
     return [s, e, s, e, e, e, e, s, e, e, s, s, e, s, s, e, s, e, e, e, e, e, e, e]
 
-
+fhfhfhfjhfj
 def depthFirstSearch(problem: SearchProblem):
     """
     Search the deepest nodes in the search tree first.

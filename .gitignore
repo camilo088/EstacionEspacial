@@ -2,4 +2,5 @@
 __pycache__/
 .DS_Store
 *.pyc
-.idea/
+.idea/1
+venv/

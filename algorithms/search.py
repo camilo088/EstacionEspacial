@@ -13,7 +13,7 @@ def tinyDiagnosticSearch(problem: SearchProblem):
     e = Directions.EAST
     return [s, e, s, e, e, e, e, s, e, e, s, s, e, s, s, e, s, e, e, e, e, e, e, e]
 
-fhfhfhfjhfj
+
 def depthFirstSearch(problem: SearchProblem):
     """
     Search the deepest nodes in the search tree first.
@@ -28,16 +28,47 @@ def depthFirstSearch(problem: SearchProblem):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
-    # TODO: Add your code here
-    utils.raiseNotDefined()
+    startState = problem.getStartState()
+    frontier = utils.Stack()
+    frontier.push((startState, []))
+    visited = {startState}
+
+    while not frontier.isEmpty():
+        state, actions = frontier.pop()
+
+        if problem.isGoalState(state):
+            return actions
+
+        for successor, action, stepCost in problem.getSuccessors(state):
+            if successor not in visited:
+                visited.add(successor)
+                frontier.push((successor, actions + [action]))
+
+    return []
 
 
 def breadthFirstSearch(problem: SearchProblem):
     """
     Search the shallowest nodes in the search tree first.
     """
-    # TODO: Add your code here
-    utils.raiseNotDefined()
+    startState = problem.getStartState()
+    frontier = utils.Queue()
+    frontier.push((startState, []))
+    visited = {startState}
+
+    while not frontier.isEmpty():
+        state, actions = frontier.pop()
+
+        if problem.isGoalState(state):
+            return actions
+
+        for successor, action, stepCost in problem.getSuccessors(state):
+            if successor not in visited:
+                visited.add(successor)
+                frontier.push((successor, actions + [action]))
+
+    return []
+
 
 
 def uniformCostSearch(problem: SearchProblem):

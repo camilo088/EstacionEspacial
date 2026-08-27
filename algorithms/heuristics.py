@@ -1,3 +1,4 @@
+import math
 from typing import Tuple
 from algorithms import utils
 from algorithms.problems import SystemRepairProblem
@@ -21,8 +22,20 @@ def manhattanHeuristic(state, problem):
     - the nearest pending T if the robot has the kit and systems remain.
     - C if all systems have been repaired.
     """
-    # TODO: Add your code here
-    utils.raiseNotDefined()
+    position, hasKit, pendingSystems = state
+
+    if not hasKit:
+        target = problem.kitPosition
+    elif pendingSystems:
+        target = min(
+            pendingSystems,
+            key=lambda system: abs(position[0] - system[0])
+            + abs(position[1] - system[1]),
+        )
+    else:
+        target = problem.controlPosition
+
+    return abs(position[0] - target[0]) + abs(position[1] - target[1])
 
 
 def euclideanHeuristic(state, problem):
@@ -35,8 +48,21 @@ def euclideanHeuristic(state, problem):
     - the nearest pending T if the robot has the kit and systems remain.
     - C if all systems have been repaired.
     """
-    # TODO: Add your code here
-    utils.raiseNotDefined()
+    position, hasKit, pendingSystems = state
+
+    if not hasKit:
+        target = problem.kitPosition
+    elif pendingSystems:
+        target = min(
+            pendingSystems,
+            key=lambda system: math.hypot(
+                position[0] - system[0], position[1] - system[1]
+            ),
+        )
+    else:
+        target = problem.controlPosition
+
+    return math.hypot(position[0] - target[0], position[1] - target[1])
 
 
 def systemRepairHeuristic(
@@ -56,5 +82,37 @@ def systemRepairHeuristic(
     - Consider the kit, pending systems, and the final return to control center
     - Balance heuristic strength vs. computation time (do experiments!)
     """
-    # TODO: Add your code here
-    utils.raiseNotDefined()
+    position, hasKit, pendingSystems = state
+
+    requiredPositions = []
+    if not hasKit:
+        requiredPositions.append(problem.kitPosition)
+    requiredPositions.extend(pendingSystems)
+    requiredPositions.append(problem.controlPosition)
+
+    targets = list(dict.fromkeys(requiredPositions))
+    if not targets:
+        return 0
+
+    # The MST is a lower bound on the cost of visiting every remaining target.
+    connected = {position}
+    remainingTargets = set(targets) - connected
+    totalCost = 0
+    while remainingTargets:
+        cheapestTarget = None
+        cheapestCost = float("inf")
+
+        for target in remainingTargets:
+            distance = min(
+                abs(node[0] - target[0]) + abs(node[1] - target[1])
+                for node in connected
+            )
+            if distance < cheapestCost:
+                cheapestTarget = target
+                cheapestCost = distance
+
+        connected.add(cheapestTarget)
+        remainingTargets.remove(cheapestTarget)
+        totalCost += cheapestCost
+
+    return totalCost
